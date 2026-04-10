@@ -1,0 +1,35 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "landingPage": "/admin",
+  "login": false,
+  "preferredVersions": {
+    "php": "latest",
+    "wp": "latest"
+  },
+  "steps": [
+    {
+      "step": "runPHP",
+      "code": "<?php\nrequire_once 'wordpress/wp-load.php';\n\n$page_ids = [];\n\n$pages = [\n    [ 'title' => 'Sample Page', 'slug' => 'sample-page', 'content' => '<!-- wp:paragraph -->\n<p>This is an example page. It\\'s different from a blog post because it will stay in one place and will show up in your site navigation (in most themes). Most people start with an About page that introduces them to potential site visitors. It might say something like this:</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:quote -->\n<blockquote class=\"wp-block-quote\">\n<!-- wp:paragraph -->\n<p>Hi there! I\\'m a bike messenger by day, aspiring actor by night, and this is my website. I live in Los Angeles, have a great dog named Jack, and I like pi&#241;a coladas. (And gettin\\' caught in the rain.)</p>\n<!-- /wp:paragraph -->\n</blockquote>\n<!-- /wp:quote -->\n\n<!-- wp:paragraph -->\n<p>...or something like this:</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:quote -->\n<blockquote class=\"wp-block-quote\">\n<!-- wp:paragraph -->\n<p>The XYZ Doohickey Company was founded in 1971, and has been providing quality doohickeys to the public ever since. Located in Gotham City, XYZ employs over 2,000 people and does all kinds of awesome things for the Gotham community.</p>\n<!-- /wp:paragraph -->\n</blockquote>\n<!-- /wp:quote -->\n\n<!-- wp:paragraph -->\n<p>As a new WordPress user, you should go to <a href=\"http://userplayground.local/wp-admin/\">your dashboard</a> to delete this page and create new pages for your content. Have fun!</p>\n<!-- /wp:paragraph -->' ],\n];\n\nforeach ( $pages as $page ) {\n    $id = wp_insert_post([\n        'post_title'   => $page['title'],\n        'post_name'    => $page['slug'],\n        'post_content' => $page['content'],\n        'post_status'  => 'publish',\n        'post_type'    => 'page',\n    ]);\n    $page_ids[ $page['slug'] ] = $id;\n}\n\n?>"
+    },
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "blogdescription": "",
+        "blogname": "UserPlayground",
+        "date_format": "F j, Y",
+        "default_comment_status": "open",
+        "default_ping_status": "open",
+        "permalink_structure": "/%postname%/",
+        "posts_per_page": "10",
+        "show_on_front": "posts",
+        "time_format": "g:i a",
+        "timezone_string": "",
+        "WPLANG": ""
+      }
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php\nrequire_once 'wordpress/wp-load.php';\n\nwp_create_user( 'author_nielsen', 'Auth0r!234', 'jonas.nielsen@example.com' );\n$u = get_user_by( 'login', 'author_nielsen' );\nif ( $u ) $u->set_role( 'author' );\n\nwp_create_user( 'contributor_madsen', 'Contr!b456', 'emma.madsen@example.com' );\n$u = get_user_by( 'login', 'contributor_madsen' );\nif ( $u ) $u->set_role( 'contributor' );\n\nwp_create_user( 'editor_larsen', 'Ed!t0rPass#', 'sofie.larsen@example.com' );\n$u = get_user_by( 'login', 'editor_larsen' );\nif ( $u ) $u->set_role( 'editor' );\n\nwp_create_user( 'subscriber_poulsen', 'Subscr!ber789', 'lucas.poulsen@example.com' );\n$u = get_user_by( 'login', 'subscriber_poulsen' );\nif ( $u ) $u->set_role( 'subscriber' );\n\n?>"
+    }
+  ]
+}
