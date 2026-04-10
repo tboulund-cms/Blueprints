@@ -8,6 +8,10 @@
   },
   "steps": [
     {
+      "step": "runPHP",
+      "code": "<?php require_once '/wordpress/wp-load.php'; foreach ( get_posts([ 'post_type' => ['post','page'], 'post_status' => 'any', 'numberposts' => -1 ]) as $p ) { wp_delete_post( $p->ID, true ); } ?>"
+    },
+    {
       "step": "setSiteOptions",
       "options": {
         "blogdescription": "",
