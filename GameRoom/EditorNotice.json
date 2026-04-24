@@ -1,0 +1,19 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "landingPage": "/admin",
+  "login": false,
+  "preferredVersions": {
+    "php": "latest",
+    "wp": "latest"
+  },
+  "steps": [
+    {
+      "step": "runPHP",
+      "code": "<?php\n$config_path = '/wordpress/wp-config.php';\n$config = file_get_contents( $config_path );\n\nif ( false === strpos( $config, \"define( 'DISALLOW_FILE_EDIT', true );\" ) ) {\n    $marker = \"/* That's all, stop editing! Happy publishing. */\";\n    $insertion = \"define( 'DISALLOW_FILE_EDIT', true );\\n\\n\" . $marker;\n    $config = str_replace( $marker, $insertion, $config );\n    file_put_contents( $config_path, $config );\n}\n?>"
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php\nrequire_once '/wordpress/wp-load.php';\nrequire_once ABSPATH . 'wp-admin/includes/plugin.php';\n\n$plugin_dir = WP_CONTENT_DIR . '/plugins/editor-secret-notice';\n$plugin_file = $plugin_dir . '/editor-secret-notice.php';\n\nif ( ! is_dir( $plugin_dir ) ) {\n    mkdir( $plugin_dir, 0777, true );\n}\n\n$plugin_code = <<<'PHP'\n<?php\n/**\n * Plugin Name: Editor Secret Notice\n */\n\nadd_action( 'admin_notices', function () {\n    $user = wp_get_current_user();\n\n    if ( ! $user instanceof WP_User || ! in_array( 'editor', (array) $user->roles, true ) ) {\n        return;\n    }\n    ?>\n    <div class=\"notice notice-info\">\n        <p>Hello, editor - here is the secret code: C5JKHT</p>\n    </div>\n    <?php\n} );\nPHP;\n\nfile_put_contents( $plugin_file, $plugin_code );\nactivate_plugin( 'editor-secret-notice/editor-secret-notice.php' );\n?>"
+    }
+  ]
+}
